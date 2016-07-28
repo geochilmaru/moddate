@@ -30,6 +30,18 @@ def get_exif(fn):
     return ret
 
 
+# retreive exif info in the files
+def show_exif(fn):
+    img = Image.open(fn)
+    info = img._getexif()
+    ret = {}
+    for tag, value in info.items():
+        decoded = TAGS.get(tag, tag)
+        ret[decoded] = value
+        print decoded, value
+    # print ret
+
+
 def get_format_date(raw_num="00000000000000"):
     naked_num = re.findall('\d+', raw_num)
     con_num = "".join(naked_num)
