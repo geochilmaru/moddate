@@ -4,7 +4,7 @@
 from win32file import CreateFile, SetFileTime, GetFileTime, CloseHandle
 from win32file import GENERIC_READ, GENERIC_WRITE, OPEN_EXISTING
 from pywintypes import Time
-import time, datetime
+import time
 
 from Tkinter import *
 from tkFileDialog import askdirectory
@@ -18,6 +18,7 @@ import re
 import datetime
 # import logging
 import logging.handlers
+
 
 def dump_image(input_file, date_time_original):
     exif_dic = piexif.load(input_file)
@@ -64,66 +65,76 @@ def get_format_date(raw_num="00000000000000"):
     mi = raw_date[10:12]
     se = raw_date[12:14]
     str_date = year + "-" + month + "-" + date + " " + hour + ":" + mi + ":" + se
-    full_date = year + month + date + "_" + hour + mi + se
-    return str_date, full_date
-
-# top = Tk()
-# F = Frame(top)
-# F.pack(expand="true")
-# path = askdirectory(title="select directory", mustexist=1)
-
-# is_go = raw_input("Do you want to change file name and all date in those files? (Y or N)")
-# if is_go.upper() != "Y":
-#     print "Process canceled"
-#     sys.exit()
-
-# logger 인스턴스를 생성 및 로그 레벨 설정
-logger = logging.getLogger("crumbs")
-logger.setLevel(logging.DEBUG)
-
-# formmater 생성
-formatter = logging.Formatter('[%(levelname)s| %(asctime)s > %(message)s')
-
-# fileHandler와 StreamHandler를 생성
-file_handler = logging.FileHandler('modall.log')
-# streamHandler = logging.StreamHandler()
-
-# handler에 fommater 세팅
-file_handler.setFormatter(formatter)
-# streamHandler.setFormatter(formatter)
-
-# Handler를 logging에 추가
-logger.addHandler(file_handler)
-# logger.addHandler(streamHandler)
+    con_date = year + month + date + "_" + hour + mi + se
+    return str_date, con_date
 
 try:
-    path = "."
-    allowed_file = ['.JPG', '.MP4', 'WMV']
+    # top = Tk()
+    # F = Frame(top)
+    # F.pack(expand="true")
+    # path = askdirectory(title="select directory", mustexist=1)
+    #
+    # print path
+    #
+    # is_go = raw_input("Do you want to change file name and all date in those files? (Y or N)")
+    # if is_go.upper() != "Y":
+    #     print "Process canceled"
+    #     sys.exit()
+
+    # logger 인스턴스를 생성 및 로그 레벨 설정
+    logger = logging.getLogger("crumbs")
+    logger.setLevel(logging.DEBUG)
+
+    # formmater 생성
+    formatter = logging.Formatter('[%(levelname)s| %(asctime)s > %(message)s')
+
+    # fileHandler와 StreamHandler를 생성
+    file_handler = logging.FileHandler('modall.log')
+    # streamHandler = logging.StreamHandler()
+
+    # handler에 fommater 세팅
+    file_handler.setFormatter(formatter)
+    # streamHandler.setFormatter(formatter)
+
+    # Handler를 logging에 추가
+    logger.addHandler(file_handler)
+    # logger.addHandler(streamHandler)
+
+    # path = "C:/Users/shyang/.virtualenvs/projects/moddate/new"
+    path = "./."
+    allowed_file = ['.JPG', '.MP4', '.WMV']
+    # retreive files from selected directory
     for f in os.listdir(path):
         log_msg = ""
         log_level = "info"
-        f_split = os.path.splitext(f)
-        if os.path.isfile(f):
-            f_ext = f_split[1]
+        f_name = os.path.splitext(f)[0]
+        f_ext = os.path.splitext(f)[1]
+        f_file = f
+        f_path = os.path.join(path, f_file)
+        # if they are file type
+        if os.path.isfile(os.path.join(path, f_file)):
+            # if they are media file type
             if allowed_file.count(f_ext.upper()) > 0:
-                exif_date = ""
-                f_str_date, f_full_date = get_format_date(f_split[0])
-                # print
-                # print "File Name: %s" % f
-                # print "File Date : %s (YYYY-MM-DD HH:Mi:SS)" % (f_str_date)
+                # exif_date = ""
+                f_str_date, f_name_new = get_format_date(f_name)
+                print
+                print "File Name: %s" % f_file
+                print "File Date : %s (YYYY-MM-DD HH:Mi:SS)" % (f_str_date)
                 log_msg += "\n" \
                            "File Name: %s\n" \
-                           "File Date : %s (YYYY-MM-DD HH:Mi:SS)\n" % (f, f_str_date)
+                           "File Date: %s (YYYY-MM-DD HH:Mi:SS)\n" % (f_file, f_str_date)
+                # if they are jpg format type
+                date_src = ""
                 if f_ext.upper() == ".JPG":
-                    exif_date = get_exif(f)
-
-                    e_str_date, e_full_date = get_format_date(exif_date)
-                    f_full = f_full_date + f_ext
-                    date_src = ""
-                    if f_full_date != e_full_date:
-                        # print "EXIF Date: %s (%s)" % (e_str_date, e_full_date)
-                        log_msg += "EXIF Date: %s (%s)\n" % (e_str_date, e_full_date)
+                    exif_date = get_exif(os.path.join(path, f_file))
+                    e_str_date, e_name_new = get_format_date(exif_date)
+                    f_file_new = f_name_new + f_ext
+                    # if they have different date between file date and exif date
+                    if f_name_new != e_name_new:
+                        print "EXIF Date: %s (YYYY-MM-DD HH:Mi:SS)" % (e_str_date)
+                        log_msg += "EXIF Date: %s (YYYY-MM-DD HH:Mi:SS)" % (e_str_date)
                         num = "0"
+                        # select which one you want to change with
                         while True:
                             num = raw_input("Which would you like to change with? (1: File Name, 2: EXIF)")
                             if num != "1" and num != "2":
@@ -133,33 +144,31 @@ try:
                                 break
                             elif num == "2":
                                 f_str_date = e_str_date
-                                f_full_date = e_full_date
-                                f_full = e_full_date + f_ext
+                                f_name_new = e_name_new
+                                # f_file_new = e_name_new + f_ext
                                 date_src = "exif"
                                 break
-                f_name = re.findall('\d+', f_full_date)
-                f_join = "".join(f_name)
-                if len(f_join) < 12:
+                f_name_naked = "".join(re.findall('\d+', f_name_new))
+                if len(f_name_naked) < 12:
                     pass
-                elif 12 <= len(f_join) < 15:
-                    f_raw_date = "{0:0<14}".format(f_join)
-                elif len(f_join) >= 15:
-                    f_raw_date = f_join[0:14]
+                elif 12 <= len(f_name_naked) < 15:
+                    f_raw_date = "{0:0<14}".format(f_name_naked)
+                elif len(f_name_naked) >= 15:
+                    f_raw_date = f_name_naked[0:14]
                 f_year = f_raw_date[0:4]
                 f_month = f_raw_date[4:6]
                 f_date = f_raw_date[6:8]
                 f_hour = f_raw_date[8:10]
                 f_min = f_raw_date[10:12]
                 f_sec = f_raw_date[12:14]
-                f_str_date = f_year + "-" + f_month + "-" + f_date + " " + f_hour + ":" + f_min + ":" + f_sec
-                f_file = f_year + f_month + f_date + "_" + f_hour + f_min + f_sec
-                f_full = f_year + f_month + f_date + "_" + f_hour + f_min + f_sec + f_ext
+                # f_str_date = f_year + "-" + f_month + "-" + f_date + " " + f_hour + ":" + f_min + ":" + f_sec
+                # f_name_new = f_year + f_month + f_date + "_" + f_hour + f_min + f_sec
+                f_file_new = f_year + f_month + f_date + "_" + f_hour + f_min + f_sec + f_ext
 
                 # get arguments
                 cre_date = f_str_date  # create
                 mod_date = f_str_date  # modify
                 acc_date = f_str_date  # access
-                file_name = f
 
                 # specify time format
                 date_format = "%Y-%m-%d %H:%M:%S"
@@ -178,7 +187,7 @@ try:
                     # print
 
                     # change timestamp of file
-                    fh = CreateFile(file_name, GENERIC_READ | GENERIC_WRITE, 0, None, OPEN_EXISTING, 0, 0)
+                    fh = CreateFile(os.path.join(path, f_file), GENERIC_READ | GENERIC_WRITE, 0, None, OPEN_EXISTING, 0, 0)
                     cre_time, acc_time, mod_time = GetFileTime(fh)
 
                     # print "Change Create from", cre_time, "to %s" % (time.strftime(date_format, cre_date_t))
@@ -195,9 +204,9 @@ try:
                     CloseHandle(fh)
 
                     # check if all was ok
-                    cre_date = time.strftime(date_format, time.localtime(os.path.getctime(file_name)))
-                    mod_date = time.strftime(date_format, time.localtime(os.path.getmtime(file_name)))
-                    acc_date = time.strftime(date_format, time.localtime(os.path.getatime(file_name)))
+                    cre_date = time.strftime(date_format, time.localtime(os.path.getctime(os.path.join(path, f_file))))
+                    mod_date = time.strftime(date_format, time.localtime(os.path.getmtime(os.path.join(path, f_file))))
+                    acc_date = time.strftime(date_format, time.localtime(os.path.getatime(os.path.join(path, f_file))))
 
                     # print "CHECK MODIFICATION:"
                     # print "FileName: %s" % file_name
@@ -205,20 +214,21 @@ try:
                     # print "Modify  : %s" % (mod_date)
                     # print "Access  : %s" % (acc_date)
 
+                    # if you choose file as the source, modify exif date
                     if date_src == "file":
-                        dump_image(file_name, f_year + ":" + f_month + ":" + f_date + " " + f_hour + ":" + f_min + ":" + f_sec)
-                    if file_name != f_full:
-                        os.rename(file_name, f_full)
-                        # print "Change file name from %s to %s" % (file_name, f_full)
-                        log_msg += "Change file name from %s to %s\n" % (file_name, f_full)
+                        dump_image(os.path.join(path, f_file), f_year + ":" + f_month + ":" + f_date + " " + f_hour + ":" + f_min + ":" + f_sec)
+                    if f_file != f_file_new:
+                        os.rename(os.path.join(path, f_file), os.path.join(path, f_file_new))
+                        # print "Change file name from %s to %s" % (file_name, f_file_new)
+                        log_msg += "Change file name from %s to %s\n" % (f_file, f_file_new)
 
                 except WindowsError:
-                    # print "Duplicates Found"
+                    log_msg += "Duplicates Found\n"
                     post_fix = str(datetime.datetime.now().microsecond)[0:3]
-                    f_alt_file = f_file + "_" + post_fix + f_ext
-                    os.rename(file_name, f_alt_file)
-                    # print "Change file name from %s to %s" % (file_name, f_full)
-                    log_msg += "Change file name from %s to %s\n" % (file_name, f_alt_file)
+                    f_file_new_alt = f_file_new + "_" + post_fix + f_ext
+                    os.rename(os.path.join(path, f_file), os.path.join(path, f_file_new_alt))
+                    print "Change file name from %s to %s" % (f_file, f_file_new_alt)
+                    log_msg += "Change file name from %s to %s\n" % (f_file, f_file_new_alt)
                     log_level = "error"
                 except EOFError:
                     # print "Invalid date format"
