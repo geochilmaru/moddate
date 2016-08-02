@@ -7,7 +7,7 @@ from pywintypes import Time
 import time
 
 from Tkinter import *
-from tkFileDialog import askdirectory
+# from tkFileDialog import askdirectory
 from PIL import Image
 from PIL.ExifTags import TAGS
 import piexif
