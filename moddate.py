@@ -12,6 +12,7 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 import piexif
 
+import msvcrt
 import sys
 import os
 import re
@@ -85,7 +86,9 @@ if __name__ == "__main__":
     try:
         option = ""
         if len(sys.argv) == 1:
-            is_go = raw_input("Do you want to change file name and date? (Y or N)")
+            # is_go = raw_input("Do you want to change file name and date? (Y or N)")
+            print 'Do you want to change file name and date? (Y or N)'
+            is_go = msvcrt.getch()
             if is_go.upper() == "Y":
                 option = "each"
             else:
@@ -105,14 +108,18 @@ if __name__ == "__main__":
                         "(4) -e: change all files to exif date\n"
                 sys.exit()
             elif str(sys.argv[1]).upper() == "-F":
-                is_go = raw_input("Do you want to change all files name and all date to file name? (Y or N)")
+                # is_go = raw_input("Do you want to change all files name and all date to file name? (Y or N)")
+                print "Do you want to change all files name and all date to file name? (Y or N)"
+                is_go = msvcrt.getch()
                 if is_go.upper() == "Y":
                     option = "file"
                 else:
                     print "Process canceled"
                     sys.exit()
             elif str(sys.argv[1]).upper() == "-E":
-                is_go = raw_input("Do you want to change all files name and all date to exif date? (Y or N)")
+                # is_go = raw_input("Do you want to change all files name and all date to exif date? (Y or N)")
+                print "Do you want to change all files name and all date to exif date? (Y or N)"
+                is_go = msvcrt.getch()
                 if is_go.upper() == "Y":
                     option = "exif"
                 else:
@@ -129,22 +136,22 @@ if __name__ == "__main__":
         # F.pack(expand="true")
         # path = askdirectory(title="select directory", mustexist=1)
 
-        # logger ÀÎ½ºÅÏ½º¸¦ »ý¼º ¹× ·Î±× ·¹º§ ¼³Á¤
+        # logger ï¿½Î½ï¿½ï¿½Ï½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         logger = logging.getLogger("crumbs")
         logger.setLevel(logging.DEBUG)
 
-        # formmater »ý¼º
+        # formmater ï¿½ï¿½ï¿½ï¿½
         formatter = logging.Formatter('[%(levelname)s| %(asctime)s > %(message)s')
 
-        # fileHandler¿Í StreamHandler¸¦ »ý¼º
+        # fileHandlerï¿½ï¿½ StreamHandlerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         file_handler = logging.FileHandler('modall.log')
         # streamHandler = logging.StreamHandler()
 
-        # handler¿¡ fommater ¼¼ÆÃ
+        # handlerï¿½ï¿½ fommater ï¿½ï¿½ï¿½ï¿½
         file_handler.setFormatter(formatter)
         # streamHandler.setFormatter(formatter)
 
-        # Handler¸¦ logging¿¡ Ãß°¡
+        # Handlerï¿½ï¿½ loggingï¿½ï¿½ ï¿½ß°ï¿½
         logger.addHandler(file_handler)
         # logger.addHandler(streamHandler)
 
@@ -186,8 +193,11 @@ if __name__ == "__main__":
                             # select which one you want to change with
                             if option == "each":
                                 while True:
-                                    num = raw_input("Which would you like to change with? "
-                                                    "(1: File Name, 2: EXIF, 3: Ignore)")
+                                    # num = raw_input("Which would you like to change with? "
+                                    #                 "(1: File Name, 2: EXIF, 3: Ignore)")
+                                    print "Which would you like to change with?"
+                                    print "(1: File Name, 2: EXIF, 3: Ignore)"
+                                    num = msvcrt.getch()
                                     if num != "1" and num != "2" and num != "3":
                                         continue
                                     if num == "1":
