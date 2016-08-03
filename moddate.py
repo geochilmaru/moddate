@@ -180,7 +180,7 @@ if __name__ == "__main__":
                         f_file_new = f_name_new + f_ext
                         # if they have different date between file date and exif date
                         if f_name_new != e_name_new:
-                            print "EXIF Date: %s (YYYY-MM-DD HH:Mi:SS)\n" % (e_str_date)
+                            print "EXIF Date: %s (YYYY-MM-DD HH:Mi:SS)" % (e_str_date)
                             log_msg += "EXIF Date: %s (YYYY-MM-DD HH:Mi:SS)\n" % (e_str_date)
                             num = "0"
                             # select which one you want to change with
@@ -282,7 +282,7 @@ if __name__ == "__main__":
                             dump_image(os.path.join(path, f_file), f_year + ":" + f_month + ":" + f_date + " " + f_hour + ":" + f_min + ":" + f_sec)
                         if f_file != f_file_new:
                             os.rename(os.path.join(path, f_file), os.path.join(path, f_file_new))
-                            # print "Change file name from %s to %s" % (file_name, f_file_new)
+                            print "Change file name from %s to %s" % (f_file, f_file_new)
                             log_msg += "Change file name from %s to %s\n" % (f_file, f_file_new)
 
                     except WindowsError as e:
