@@ -2,6 +2,7 @@
 # -*-coding:utf-8-*-
 import piexif
 import re
+import sys
 import os
 from PIL import Image
 from PIL.ExifTags import TAGS
@@ -24,7 +25,7 @@ def get_exif(fn):
             if decoded == 'DateTimeOriginal':
                 return value
     except AttributeError:
-        print "admin: 'NoneType' object has no attribute 'items'"
+        print "This image file does not have exif info."
         dump_image(fn)
         sys.exit()
     finally:
