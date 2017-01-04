@@ -33,7 +33,7 @@ moddate.exe <argument>
 """
 
 
-def dump_image(input_file, date_time_original):
+def dump_image(input_file, date_time_original="0000:00:00 00:00:00"):
     exif_dic = piexif.load(input_file)
     exif_dic['Exif'][piexif.ExifIFD.DateTimeOriginal] = date_time_original  #u"2099:09:29 10:10:10"
     exif_bytes = piexif.dump(exif_dic)
@@ -41,17 +41,22 @@ def dump_image(input_file, date_time_original):
 
 
 def get_exif(fn):
-    img = Image.open(fn)
-    info = img._getexif()
-    ret = None
-    for tag, value in info.items():
-        decoded = TAGS.get(tag, tag)
-        if decoded == 'DateTimeOriginal':
-            return value
-    if ret is None:
-        ret = "00000000000000"
-    return ret
-
+    try:
+        img = Image.open(fn)
+        info = img._getexif()
+        ret = None
+        for tag, value in info.items():
+            decoded = TAGS.get(tag, tag)
+            if decoded == 'DateTimeOriginal':
+                return value
+    except AttributeError:
+        print "admin: 'NoneType' object has no attribute 'items'"
+        dump_image(fn)
+        sys.exit()
+    finally:
+        if ret is None:
+            ret = "00000000000000"
+        return ret
 
 def show_exif(fn):
     img = Image.open(fn)
