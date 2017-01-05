@@ -162,7 +162,7 @@ if __name__ == "__main__":
         file_info_order = ["src_name", "src_exif", "src_date", "src_created", "src_modified", "src_accessed",
                            "tgt_name", "tgt_exif", "tgt_created", "tgt_modified", "tgt_accessed"]
         path = "./."
-        allowed_file = ['.JPG', '.MP4', '.WMV']
+        allowed_file = ['.JPG', '.JPEG', '.MP4', '.WMV']
         # retreive files from selected directory
         for f in os.listdir(path):
             file_info = {"src_name":"", "src_exif":"", "src_date":"", "src_created":"", "src_modified":"", "src_accessed":"",
@@ -192,7 +192,7 @@ if __name__ == "__main__":
                                "File Name: %s\n" \
                                "File Date: %s (YYYY-MM-DD HH:Mi:SS)\n" % (f_file, f_str_date)
                     # jpg format type
-                    if f_ext.upper() == ".JPG":
+                    if f_ext.upper() == ".JPG" or f_ext.upper() == ".JPEG":
                         exif_date = ImageInfo.get_exif(os.path.join(path, f_file))
                         e_str_date, e_name_new = ImageInfo.get_format_date(exif_date) #YYYY-MM-DD 24H:MI:SS, YYYYMMDD_24HMISS
                         file_info["src_exif"] = e_str_date  # add file info
@@ -202,7 +202,7 @@ if __name__ == "__main__":
                         if src_opt == "e":
                             f_str_date, f_name_new, f_file_new = e_str_date, e_name_new, e_file_new
                             file_info["src_date"] = f_str_date  # add file info
-                    # if f_ext.upper() == ".JPG":
+                    # if f_ext.upper() == ".JPG" or f_ext.upper() == ".JPEG":
                     f_name_naked = "".join(re.findall('\d+', f_name_new))
                     if len(f_name_naked) < 12:
                         pass
